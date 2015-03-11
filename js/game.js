@@ -56,11 +56,13 @@ var hero = {
 };
 var princess = {};
 var stone = {};
-var monster = {
-	speed: 128
-};
+var monster = {};
 // var princessesCaught = localStorage.getItem("princessStorage");
 var princessesCaught = 0;
+var level = 1;
+var hardLevel = 10;
+var cont = 0;
+var gameOver = true;
 if(princessesCaught == null){
 	princessesCaught = 0;
 }
@@ -86,12 +88,31 @@ var reset = function () {
 	princess.x = 32 +(Math.random() * (canvas.width - 96));
 	princess.y = 32 +(Math.random() * (canvas.height - 96));
 
+	if(gameOver){
+		monster.x = 32 +(Math.random() * (canvas.width - 96)); // todo lo de dentro del if gameOver lo meto en una funcion aparte, mejor
+		monster.y = 32 +(Math.random() * (canvas.height - 96));
+		if (
+		monster.x <= (princess.x + 16)
+		&& princess.x <= (monster.x + 16)
+		&& monster.y <= (princess.y + 16)
+		&& princess.y <= (monster.y + 32)
+		&& stone.x <= (monster.x + 16)
+		&& monster.x <= (stone.x + 16)
+		&& stone.y <= (monster.y + 16)
+		&& monster.y <= (stone.y + 32)
+		&& monster.x <= (hero.x + 16)
+		&& hero.x <= (monster.x + 16)
+		&& monster.y <= (hero.y + 16)
+		&& hero.y <= (monster.y + 32)
+		) {
+			monster.x = 32 +(Math.random() * (canvas.width - 96));
+			monster.y = 32 +(Math.random() * (canvas.height - 96));
+		}
+		gameOver = false;
+	}
 
 	stone.x = 32 +(Math.random() * (canvas.width - 96));
 	stone.y = 32 +(Math.random() * (canvas.height - 96));
-
-	monster.x = 32 +(Math.random() * (canvas.width - 96));
-	monster.y = 32 +(Math.random() * (canvas.height - 96));
 
 	if (
 		stone.x <= (princess.x + 16)
@@ -159,8 +180,12 @@ var update = function (modifier) {
 	) {
 		++princessesCaught;
 		//localStorage.setItem("princessStorage", princessesCaught);
+		if(princessesCaught == 1){
+			level++;
+			hardLevel--;
+			princessesCaught = 0;
+		}
 		reset();
-
 	}
 
 	if (
@@ -171,10 +196,9 @@ var update = function (modifier) {
 	) {
 		princessesCaught = 0;
 		alert("Game Over");
+		gameOver = true;
 		window.location.reload();
-
-	}
-	
+	}	
 };
 
 // Draw everything
@@ -205,15 +229,28 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Princesses caught: " + princessesCaught, 32, 32);
-	ctx.fillText("Level: " + "1", 32, 58);
+	ctx.fillText("Level: " + level, 32, 58);
 };
 
 // The main game loop
 var main = function () {
 	var now = Date.now();
 	var delta = now - then;
+	cont++;
 
+	if(cont % hardLevel == 0){
+		if((monster.x - hero.x) > 0){
+				monster.x = monster.x - 1;
+			}else{
+				monster.x = monster.x + 1;
+			}
 
+			if((monster.y - hero.y) > 0){
+				monster.y = monster.y - 1;
+			}else{
+				monster.y = monster.y + 1;
+		}
+	}
 
 	update(delta / 1000);
 	render();
