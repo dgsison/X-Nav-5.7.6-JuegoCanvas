@@ -88,7 +88,12 @@ var reset = function () {
 	princess.x = 32 +(Math.random() * (canvas.width - 96));
 	princess.y = 32 +(Math.random() * (canvas.height - 96));
 
-	if(gameOver){
+	if(gameOver || (
+		hero.x <= (monster.x + 10)
+		&& monster.x <= (hero.x + 10)
+		&& hero.y <= (monster.y + 10)
+		&& monster.y <= (hero.y + 22)
+		)){
 		monster.x = 32 +(Math.random() * (canvas.width - 96)); // todo lo de dentro del if gameOver lo meto en una funcion aparte, mejor
 		monster.y = 32 +(Math.random() * (canvas.height - 96));
 		if (
@@ -180,7 +185,7 @@ var update = function (modifier) {
 	) {
 		++princessesCaught;
 		//localStorage.setItem("princessStorage", princessesCaught);
-		if(princessesCaught == 1){
+		if(princessesCaught == 10){
 			level++;
 			hardLevel--;
 			princessesCaught = 0;
@@ -189,10 +194,10 @@ var update = function (modifier) {
 	}
 
 	if (
-		hero.x <= (monster.x + 16)
-		&& monster.x <= (hero.x + 16)
-		&& hero.y <= (monster.y + 16)
-		&& monster.y <= (hero.y + 32)
+		hero.x <= (monster.x + 10)
+		&& monster.x <= (hero.x + 10)
+		&& hero.y <= (monster.y + 10)
+		&& monster.y <= (hero.y + 22)
 	) {
 		princessesCaught = 0;
 		alert("Game Over");
@@ -238,7 +243,7 @@ var main = function () {
 	var delta = now - then;
 	cont++;
 
-	if(cont % hardLevel == 0){
+	if(cont%hardLevel == 0){
 		if((monster.x - hero.x) > 0){
 				monster.x = monster.x - 1;
 			}else{
